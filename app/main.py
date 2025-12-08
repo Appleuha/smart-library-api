@@ -193,33 +193,15 @@ async def add_security_headers(request: Request, call_next):
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["X-XSS-Protection"] = "1; mode=block"
-    response.headers["Content-Type"] = "application/json; charset=utf-8"
-
-    # API headers
     response.headers["X-API-Version"] = "1.0"
 
-    # Обрабатываем тело ответа для корректного отображения Unicode
-    if hasattr(response, "body"):
-        try:
-            # Декодируем тело ответа
-            if isinstance(response.body, bytes):
-                body_str = response.body.decode("utf-8")
-            else:
-                body_str = str(response.body)
+    # Для Swagger UI не меняем Content-Type и не обрабатываем тело
+    if request.url.path in ["/docs", "/redoc", "/openapi.json", "/favicon.ico"]:
+        return response
 
-            # Преобразуем JSON с ensure_ascii=False
-            parsed_json = json.loads(body_str)
-            # Преобразуем обратно без escape-последовательностей
-            fixed_body = json.dumps(
-                parsed_json, ensure_ascii=False, separators=(",", ":")
-            )
-            response.body = fixed_body.encode("utf-8")
-
-            # Обновляем Content-Length
-            response.headers["Content-Length"] = str(len(response.body))
-        except (json.JSONDecodeError, UnicodeDecodeError):
-            # Если не JSON, оставляем как есть
-            pass
+    # Только для JSON ответов добавляем charset
+    if "application/json" in response.headers.get("content-type", ""):
+        response.headers["Content-Type"] = "application/json; charset=utf-8"
 
     return response
 

@@ -1,0 +1,17 @@
+# Игнорируемые файлы для Docker
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.env
+*.db
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.DS_Store
+.git/
+.gitignore
+README.md

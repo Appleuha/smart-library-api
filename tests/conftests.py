@@ -1,7 +1,8 @@
 # tests/conftest.py
-import pytest
-import sqlite3
 import os
+import sqlite3
+
+import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
@@ -13,11 +14,11 @@ def test_client():
     # Удаляем старую тестовую базу, если есть
     if os.path.exists("test_library.db"):
         os.remove("test_library.db")
-    
+
     # Создаем новую базу для тестов
     conn = sqlite3.connect("test_library.db")
     cursor = conn.cursor()
-    
+
     # Создаем таблицу книг
     cursor.execute(
         """
@@ -34,34 +35,34 @@ def test_client():
         )
         """
     )
-    
+
     conn.commit()
     conn.close()
-    
+
     # Патчим приложение на использование тестовой базы
     import app.api.v1.endpoints.books as books_module
-    
+
     # Сохраняем оригинальную функцию
     original_get_db_connection = books_module.get_db_connection
-    
+
     # Создаем новую функцию для тестов
     def test_get_db_connection():
         """Получение соединения с тестовой БД"""
         conn = sqlite3.connect("test_library.db")
         conn.row_factory = sqlite3.Row
         return conn
-    
+
     # Подменяем функцию
     books_module.get_db_connection = test_get_db_connection
-    
+
     # Создаем клиент
     client = TestClient(app)
-    
+
     yield client  # Отдаем клиент тесту
-    
+
     # После теста восстанавливаем оригинальную функцию
     books_module.get_db_connection = original_get_db_connection
-    
+
     # Очищаем тестовую базу
     if os.path.exists("test_library.db"):
         os.remove("test_library.db")
@@ -76,5 +77,5 @@ def sample_book_data():
         "isbn": "9783161484100",
         "year": 2023,
         "description": "Sample description",
-        "is_available": True
+        "is_available": True,
     }

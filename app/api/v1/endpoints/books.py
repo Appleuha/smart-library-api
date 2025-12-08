@@ -25,10 +25,16 @@ async def get_books(
     limit: int = Query(
         100, ge=1, le=1000, description="Количество записей на странице"
     ),
-    author: Optional[str] = Query(None, description="Фильтр по автору (частичное совпадение)"),
-    title: Optional[str] = Query(None, description="Фильтр по названию (частичное совпадение)"),
+    author: Optional[str] = Query(
+        None, description="Фильтр по автору (частичное совпадение)"
+    ),
+    title: Optional[str] = Query(
+        None, description="Фильтр по названию (частичное совпадение)"
+    ),
     year: Optional[int] = Query(None, ge=1000, le=2100, description="Фильтр по году"),
-    search: Optional[str] = Query(None, description="Поиск по названию ИЛИ автору"),  # НОВЫЙ параметр
+    search: Optional[str] = Query(
+        None, description="Поиск по названию ИЛИ автору"
+    ),  # НОВЫЙ параметр
     available_only: bool = Query(False, description="Только доступные книги"),
 ):
     """Получить список книг с пагинацией и фильтрацией"""
@@ -85,7 +91,7 @@ async def get_books(
             for key in row.keys():
                 value = row[key]
                 # Преобразуем булевы значения
-                if key == 'is_available':
+                if key == "is_available":
                     value = bool(value)
                 book_dict[key] = value
             books.append(book_dict)
@@ -146,7 +152,7 @@ async def get_book(book_id: int):
         book_dict = {}
         for key in row.keys():
             value = row[key]
-            if key == 'is_available':
+            if key == "is_available":
                 value = bool(value)
             book_dict[key] = value
 
@@ -211,7 +217,7 @@ async def create_book(book: BookCreate):
         book_dict = {}
         for key in row.keys():
             value = row[key]
-            if key == 'is_available':
+            if key == "is_available":
                 value = bool(value)
             book_dict[key] = value
 
@@ -224,8 +230,8 @@ async def create_book(book: BookCreate):
 
         return JSONResponse(
             status_code=201,  # Явно указываем статус код в ответе
-            content=response_data, 
-            media_type="application/json; charset=utf-8"
+            content=response_data,
+            media_type="application/json; charset=utf-8",
         )
 
     except sqlite3.IntegrityError as e:
@@ -244,102 +250,102 @@ async def create_book(book: BookCreate):
             detail=f"Ошибка при создании книги: {str(e)}",
         )
 
+
 @router.put("/{book_id}")
 async def update_book(book_id: int, book_update: BookUpdate):
     """Обновить книгу по ID"""
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        
+
         # Проверяем существует ли книга
         cursor.execute("SELECT * FROM books WHERE id = ?", (book_id,))
         existing_book = cursor.fetchone()
-        
+
         if not existing_book:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Книга с ID {book_id} не найдена"
+                detail=f"Книга с ID {book_id} не найдена",
             )
-        
+
         # Собираем поля для обновления
         update_fields = []
         update_values = []
-        
+
         if book_update.title is not None:
             update_fields.append("title = ?")
             update_values.append(book_update.title)
-        
+
         if book_update.author is not None:
             update_fields.append("author = ?")
             update_values.append(book_update.author)
-        
+
         if book_update.isbn is not None:
             update_fields.append("isbn = ?")
             update_values.append(book_update.isbn)
-        
+
         if book_update.year is not None:
             update_fields.append("year = ?")
             update_values.append(book_update.year)
-        
+
         if book_update.description is not None:
             update_fields.append("description = ?")
             update_values.append(book_update.description)
-        
+
         if book_update.is_available is not None:
             update_fields.append("is_available = ?")
             update_values.append(1 if book_update.is_available else 0)
-        
+
         # Добавляем updated_at
         update_fields.append("updated_at = CURRENT_TIMESTAMP")
-        
+
         if not update_fields:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Нет данных для обновления"
+                detail="Нет данных для обновления",
             )
-        
+
         # Добавляем ID в конец значений
         update_values.append(book_id)
-        
+
         # Выполняем обновление
         update_query = f"UPDATE books SET {', '.join(update_fields)} WHERE id = ?"
         cursor.execute(update_query, update_values)
-        
+
         # Получаем обновленную книгу
         cursor.execute("SELECT * FROM books WHERE id = ?", (book_id,))
         updated_book = cursor.fetchone()
-        
+
         conn.commit()
         conn.close()
-        
+
         response_data = {
             "success": True,
             "data": dict(updated_book),
             "message": "Книга успешно обновлена",
             "timestamp": datetime.now().isoformat(),
         }
-        
+
         return JSONResponse(
-            content=response_data,
-            media_type="application/json; charset=utf-8"
+            content=response_data, media_type="application/json; charset=utf-8"
         )
-        
+
     except sqlite3.IntegrityError as e:
         if "UNIQUE constraint failed" in str(e):
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
-                detail="Книга с таким ISBN уже существует"
+                detail="Книга с таким ISBN уже существует",
             )
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Ошибка базы данных: {str(e)}"
+            detail=f"Ошибка базы данных: {str(e)}",
         )
     except HTTPException:
         raise
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Ошибка при обновлении книги: {str(e)}"
+            detail=f"Ошибка при обновлении книги: {str(e)}",
         )
 
 
@@ -349,41 +355,40 @@ async def delete_book(book_id: int):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        
+
         # Проверяем существует ли книга
         cursor.execute("SELECT * FROM books WHERE id = ?", (book_id,))
         book = cursor.fetchone()
-        
+
         if not book:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Книга с ID {book_id} не найдена"
+                detail=f"Книга с ID {book_id} не найдена",
             )
-        
+
         # Удаляем книгу
         cursor.execute("DELETE FROM books WHERE id = ?", (book_id,))
-        
+
         conn.commit()
         conn.close()
-        
+
         response_data = {
             "success": True,
             "message": f"Книга с ID {book_id} успешно удалена",
             "deleted_book": dict(book),
             "timestamp": datetime.now().isoformat(),
         }
-        
+
         return JSONResponse(
-            content=response_data,
-            media_type="application/json; charset=utf-8"
+            content=response_data, media_type="application/json; charset=utf-8"
         )
-        
+
     except HTTPException:
         raise
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Ошибка при удалении книги: {str(e)}"
+            detail=f"Ошибка при удалении книги: {str(e)}",
         )
 
 

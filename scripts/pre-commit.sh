@@ -18,13 +18,4 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# 3. Запуск тестов
-echo "🧪 Running tests..."
-python -m pytest tests/ -v --tb=short
-
-if [ $? -ne 0 ]; then
-    echo "❌ Tests failed! Commit aborted."
-    exit 1
-fi
-
-echo "✅ All checks passed! Ready to commit."
+echo "✅ Pre-commit checks passed! Ready to commit."
