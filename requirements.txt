@@ -1,0 +1,25 @@
+# Основные
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+# База данных
+sqlalchemy==2.0.23
+alembic==1.12.1
+# sqlite3 - УДАЛИ ЭТУ СТРОКУ, он встроен в Python
+
+# Валидация
+pydantic==2.5.0
+pydantic-settings==2.1.0
+python-dotenv==1.0.0
+
+# Тестирование
+pytest==7.4.3
+httpx==0.25.1
+
+# Линтинг
+black==23.11.0
+flake8==6.1.0
+isort==5.12.0
+
+# Git hooks
+pre-commit==3.6.0
