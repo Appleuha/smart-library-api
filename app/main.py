@@ -2,11 +2,10 @@ import sqlite3
 from datetime import datetime
 
 import uvicorn
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from fastapi import HTTPException
 
 from app.api.v1.endpoints import books
 from app.schemas.response import ErrorCodes, ErrorResponse
