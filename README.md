@@ -2,7 +2,7 @@
 
 ## 1. Название и назначение сервиса
 
-**Название:** Smart Library API  
+**Название:** Smart Library API
 **Назначение:** REST API микросервис для управления каталогом книг в библиотечной системе.
 
 **Основные функции:**
@@ -52,7 +52,8 @@ source venv/bin/activate
 pip install -r requirements.txt
 
 # Запустите сервис
-python -m app.main ```
+python -m app.main
+```
 
 
 ### Способ 2: Запуск через Docker
@@ -77,7 +78,7 @@ OpenAPI/Swagger документация:
 После запуска сервиса доступна по адресу: http://localhost:8000/docs
 
 Основные эндпоинты:
-Книги: 
+Книги:
 * GET /api/v1/books/ - Получить список книг (с пагинацией и фильтрацией)
 * GET /api/v1/books/{id} - Получить книгу по ID
 * POST /api/v1/books/ - Создать новую книгу
