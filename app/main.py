@@ -6,6 +6,7 @@ from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi import HTTPException
 
 from app.api.v1.endpoints import books
 from app.schemas.response import ErrorCodes, ErrorResponse
@@ -89,7 +90,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     )
 
 
-@app.exception_handler(404)
+@app.exception_handler(HTTPException)
 async def not_found_exception_handler(request: Request, exc):
     """Обработчик 404 ошибок"""
     return JSONResponse(
@@ -159,7 +160,7 @@ async def health_check():
             # Получаем количество книг
             cursor.execute("SELECT COUNT(*) FROM books")
             result = cursor.fetchone()  # Это кортеж, например (5,)
-            book_count = result[0] if result else 0
+            book_count = result[0]
             db_status = "healthy"
         else:
             book_count = 0
