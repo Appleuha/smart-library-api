@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🔍 Running pre-commit checks..."
+echo "Running pre-commit checks..."
 
 # 1. Форматирование
 echo "Formatting with isort..."
