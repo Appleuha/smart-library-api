@@ -65,7 +65,8 @@ docker build -t smart-library-api .
 docker run -p 8000:8000 smart-library-api
 
 # Или с сохранением данных:
-docker run -p 8000:8000 -v $(pwd)/data:/app/data smart-library-api```
+docker run -p 8000:8000 -v $(pwd)/data:/app/data smart-library-api
+```
 
 ### Переменные окружения (.env)
 Создайте файл .env в корне проекта:
@@ -109,7 +110,8 @@ python -m pytest tests/ -v
 python -m pytest tests/ --cov=app
 
 # Конкретный тестовый файл
-python -m pytest tests/test_books_crud.py```
+python -m pytest tests/test_books_crud.py
+```
 
 Git Hooks для автоматического тестирования:
 Проект настроен с Git hooks для автоматических проверок:
