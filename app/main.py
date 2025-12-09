@@ -23,7 +23,7 @@ app = FastAPI(
         "url": "https://github.com/your-username/smart-library-api",
     },
     license_info={
-        "name": "MIT",
+        "name": "License",
         "url": "https://opensource.org/licenses/MIT",
     },
 )
